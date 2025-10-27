@@ -78,7 +78,7 @@ export default function App() {
     <View style={styles.container}>
       {!submitted ? (
         <>
-          <Text style={styles.title}>Connexion</Text>
+          <Text style={styles.title}>Login</Text>
           <TextInput
             placeholder="Email"
             value={email}
@@ -87,7 +87,7 @@ export default function App() {
             style={styles.input}
           />
           <Button
-            title="Se connecter"
+            title="Log in"
             accessibilityLabel="submitButton"
             onPress={handleLogin}
           />
@@ -95,10 +95,10 @@ export default function App() {
       ) : (
         <>
           <Text accessibilityLabel="welcomeText">
-            Bienvenue {email}
+            Welcome {email}
           </Text>
           <Button
-            title="Déconnexion"
+            title="Log out"
             accessibilityLabel="logoutButton" // 👈 utile pour Maestro
             onPress={handleLogout}
           />

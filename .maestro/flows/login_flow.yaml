@@ -5,4 +5,4 @@ appId: host.exp.exponent
 - tapOn: "emailInput"
 - inputText: "alain@example.com"
 - tapOn: "submitButton"
-- assertVisible: "Bienvenue alain@example.com"
+- assertVisible: "Welcome alain@example.com"
