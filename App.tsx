@@ -1,91 +1,54 @@
-/*
 import React, { useState } from "react";
 import { View, Text, TextInput, Button, StyleSheet } from "react-native";
+import * as Keychain from 'react-native-keychain';
 
 export default function App() {
-  const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const [username, setUsername] = useState("");
+  const [logged, setLogged] = useState(false);
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const handleLogin = () => {
-    setSubmitted(true);
-  };
+  const handleLogin = (string user, string pass) => {
+    try {
+        const res = await fetch('', {body: username: user, password: pass}); //Helped by AI
+        if(res.ok) {
+            await Keychain.setGenericPassword("token", res.token); //AI
+            setLogged(await keychain.getGenericPassword());
+        } else {
+            setErrorMessage("Invalid username or password");
+        }
 
-  return (
-    <View style={styles.container}>
-      {!submitted ? (
-        <>
-          <Text style={styles.title}>Connexion</Text>
-          <TextInput
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-            accessibilityLabel="emailInput"   // 👈 Maestro s'en sert
-            style={styles.input}
-          />
-          <Button
-            title="Se connecter"
-            accessibilityLabel="submitButton" // 👈 Maestro s'en sert
-            onPress={handleLogin}
-          />
-        </>
-      ) : (
-        <Text accessibilityLabel="welcomeText">
-          Bienvenue {email}
-        </Text>
-      )}
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    marginBottom: 20,
-  },
-  input: {
-    width: "80%",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 20,
-  },
-});
-*/
-import React, { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet } from "react-native";
-
-export default function App() {
-  const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-
-  const handleLogin = () => {
-    setSubmitted(true);
+    } catch (e) {
+        setErrorMessage(e.Message);
+    }
   };
 
   const handleLogout = () => {
-    setSubmitted(false);
-    setEmail(""); // Optionnel : réinitialiser l'email
+    setLogged(false);
+    setUsername("");
   };
 
   return (
     <View style={styles.container}>
-      {!submitted ? (
+      {!logged ? (
         <>
           <Text style={styles.title}>Login</Text>
           <TextInput
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-            accessibilityLabel="emailInput"
+            placeholder="Username"
+            value={username}
+            onChangeText={setUsername}
+            accessibilityLabel="usernameInput"
             style={styles.input}
           />
+          <TextInput
+            placeholder="Password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry={true} //AI
+            accessibilityLabel="passwordInput"
+            style={styles.input}
+          />
+          <Text accessibilityLabel="ErrorMessageLabel" value={errorMessage}></Text>
           <Button
             title="Log in"
             accessibilityLabel="submitButton"
@@ -95,7 +58,7 @@ export default function App() {
       ) : (
         <>
           <Text accessibilityLabel="welcomeText">
-            Welcome {email}
+            Welcome {username}, you are logged in
           </Text>
           <Button
             title="Log out"
