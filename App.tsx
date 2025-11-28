@@ -37,9 +37,11 @@ export default function App() {
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await SecureStore.deleteItemAsync('token');
     setLogged(false);
     setUsername("");
+    setErrorMessage("Logout successful!");
   };
 
   return (
@@ -78,7 +80,7 @@ export default function App() {
           </Text>
           <Button
             title="Log out"
-            accessibilityLabel="logoutButton" // 👈 utile pour Maestro
+            accessibilityLabel="logoutButton"
             onPress={handleLogout}
           />
         </>
