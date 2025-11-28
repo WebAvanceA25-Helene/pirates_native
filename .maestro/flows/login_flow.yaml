@@ -2,9 +2,9 @@ appId: host.exp.exponent
 ---
 #- launchApp
 # ⚠️ Assure-toi que ton app Expo est déjà ouverte dans l’émulateur avant d’exécuter ce test.
-#- tapOn: "usernameInput"
-#- inputText: "test"
-#- tapOn: "passwordInput"
-#- inputText: "Patate123"
-#- tapOn: "submitButton"
-#- assertVisible: "Welcome test, you are logged in"
+- tapOn: "usernameInput"
+- inputText: "test"
+- tapOn: "passwordInput"
+- inputText: "Patate123"
+- tapOn: "submitButton"
+- assertVisible: "Invalid username or password"
