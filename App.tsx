@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, Button, StyleSheet } from "react-native";
-import * as Keychain from 'react-native-keychain';
+import * as SecureStore from 'expo-secure-store';
 
 export default function App() {
   const [username, setUsername] = useState("");
@@ -8,18 +8,32 @@ export default function App() {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleLogin = (string user, string pass) => {
+  const handleLogin = async () => {
     try {
-        const res = await fetch('', {body: username: user, password: pass}); //Helped by AI
-        if(res.ok) {
-            await Keychain.setGenericPassword("token", res.token); //AI
-            setLogged(await keychain.getGenericPassword());
-        } else {
-            setErrorMessage("Invalid username or password");
-        }
+      const res = await fetch('https://edwrdlhelene.me:2222/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password
+        })
+      }); //Helped by AI (existence du fetch et ajout des headers et du stringify)
 
-    } catch (e) {
-        setErrorMessage(e.Message);
+      if(res.ok) {
+        const jsonRes = await res.json();
+        console.log(jsonRes);
+        await SecureStore.setItemAsync('token', jsonRes.token); //AI
+        console.log(await SecureStore.getItemAsync('token'));//AI
+        setLogged(await SecureStore.getItemAsync('token') !== null);
+        setErrorMessage("Login successful!");
+      } else {
+        setErrorMessage("Invalid username or password");
+      }
+
+    } catch (res) {
+      setErrorMessage("Failed to login\t" + res);
     }
   };
 
@@ -48,7 +62,9 @@ export default function App() {
             accessibilityLabel="passwordInput"
             style={styles.input}
           />
-          <Text accessibilityLabel="ErrorMessageLabel" value={errorMessage}></Text>
+          <Text accessibilityLabel="ErrorMessageLabel">
+            {errorMessage}
+          </Text>
           <Button
             title="Log in"
             accessibilityLabel="submitButton"
