@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet } from "react-native";
+import CheckBox from '@react-native-community/checkbox';
+import { View, Text, TextInput, Button, StyleSheet, FlatList } from "react-native";
 import * as SecureStore from 'expo-secure-store';
 
 export default function App() {
@@ -7,10 +8,12 @@ export default function App() {
   const [logged, setLogged] = useState(false);
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [boats, setBoats] = useState<any>([]);
+  const base_url = "https://edwrdlhelene.me:2222/api"
 
   const handleLogin = async () => {
     try {
-      const res = await fetch('https://edwrdlhelene.me:2222/api/auth/login', {
+      const res = await fetch(base_url + '/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -26,8 +29,10 @@ export default function App() {
         console.log(jsonRes);
         await SecureStore.setItemAsync('token', jsonRes.token); //AI
         console.log(await SecureStore.getItemAsync('token'));//AI
+        setPassword("");
         setLogged(await SecureStore.getItemAsync('token') !== null);
         setErrorMessage("Login successful!");
+        handleGetBoats;
       } else {
         setErrorMessage("Invalid username or password");
       }
@@ -43,6 +48,33 @@ export default function App() {
     setUsername("");
     setErrorMessage("Logout successful!");
   };
+
+  const handleGetBoats = async () => {
+    try {
+      const token = await SecureStore.getItemAsync('token');
+      const res = await fetch( base_url + '/ships', { 
+        method: 'Get',
+        headers: {
+          'Authorization': 'Bearer ' + token
+        },
+      }); //Helped by AI (nom du token dans les headers)
+
+      if(res.ok) {
+        const jsonRes = await res.json();
+        console.log(jsonRes);
+        setBoats(jsonRes); //Clairement ça marchera pas juste comme ça
+      } else {
+        setErrorMessage("Invalid username or password");
+      }
+
+    } catch (res) {
+      setErrorMessage("Failed to login\t" + res);
+    }
+  }
+
+  const handleCheckBoxCheck = () => {
+
+  }
 
   return (
     <View style={styles.container}>
@@ -78,6 +110,34 @@ export default function App() {
           <Text accessibilityLabel="welcomeText">
             Welcome {username}, you are logged in
           </Text>
+          <FlatList
+            data={boats}
+            keyExtractor={(_, index) => index.toString()}
+            ListHeaderComponent={
+              <View style={styles.listItem}>
+                <Text>Selected</Text>
+                <Text>Boat name</Text>
+                <Text>Captain</Text>
+                <Text>Status</Text>
+                <Text>Gold cargo</Text>
+                <Text>Crew size</Text>
+                <Text>Creator</Text>
+              </View>
+            }
+            renderItem={({ item }) => (
+              <View style={styles.listItem}>
+                <CheckBox 
+                  onValueChange={handleCheckBoxCheck}
+                />
+                <Text>{item.name}</Text>
+                <Text>{item.captain}</Text>
+                <Text>{item.status}</Text>
+                <Text>{item.goldCargo}</Text>
+                <Text>{item.crewSize}</Text>
+                <Text>{item.createdBy}</Text>
+              </View>
+            )}
+          />
           <Button
             title="Log out"
             accessibilityLabel="logoutButton"
@@ -86,7 +146,7 @@ export default function App() {
         </>
       )}
     </View>
-  );
+  );//Aide de chatGPT pour le flatlist
 }
 
 const styles = StyleSheet.create({
@@ -107,6 +167,10 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     marginBottom: 20,
+  },
+  listItem: {
+     flexDirection: 'row', 
+     marginBottom: 6 
   },
 });
 
