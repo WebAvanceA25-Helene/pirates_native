@@ -1,101 +1,81 @@
-/*
 import React, { useState } from "react";
 import { View, Text, TextInput, Button, StyleSheet } from "react-native";
+import * as SecureStore from 'expo-secure-store';
 
 export default function App() {
-  const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const [username, setUsername] = useState("");
+  const [logged, setLogged] = useState(false);
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const handleLogin = () => {
-    setSubmitted(true);
-  };
+  const handleLogin = async () => {
+    try {
+      const res = await fetch('https://edwrdlhelene.me:2222/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password
+        })
+      }); //Helped by AI (existence du fetch et ajout des headers et du stringify)
 
-  return (
-    <View style={styles.container}>
-      {!submitted ? (
-        <>
-          <Text style={styles.title}>Connexion</Text>
-          <TextInput
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-            accessibilityLabel="emailInput"   // 👈 Maestro s'en sert
-            style={styles.input}
-          />
-          <Button
-            title="Se connecter"
-            accessibilityLabel="submitButton" // 👈 Maestro s'en sert
-            onPress={handleLogin}
-          />
-        </>
-      ) : (
-        <Text accessibilityLabel="welcomeText">
-          Bienvenue {email}
-        </Text>
-      )}
-    </View>
-  );
-}
+      if(res.ok) {
+        const jsonRes = await res.json();
+        console.log(jsonRes);
+        await SecureStore.setItemAsync('token', jsonRes.token); //AI
+        console.log(await SecureStore.getItemAsync('token'));//AI
+        setLogged(await SecureStore.getItemAsync('token') !== null);
+        setErrorMessage("Login successful!");
+      } else {
+        setErrorMessage("Invalid username or password");
+      }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    marginBottom: 20,
-  },
-  input: {
-    width: "80%",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 20,
-  },
-});
-*/
-import React, { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet } from "react-native";
-
-export default function App() {
-  const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-
-  const handleLogin = () => {
-    setSubmitted(true);
+    } catch (res) {
+      setErrorMessage("Failed to login\t" + res);
+    }
   };
 
   const handleLogout = () => {
-    setSubmitted(false);
-    setEmail(""); // Optionnel : réinitialiser l'email
+    setLogged(false);
+    setUsername("");
+    setPassword("");
   };
 
   return (
     <View style={styles.container}>
-      {!submitted ? (
+      {!logged ? (
         <>
           <Text style={styles.title}>Login</Text>
           <TextInput
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-            accessibilityLabel="emailInput"
+            placeholder="Username"
+            value={username}
+            onChangeText={setUsername}
+            accessibilityLabel="usernameInput"
             style={styles.input}
           />
+          <TextInput
+            placeholder="Password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry={true} //AI
+            accessibilityLabel="passwordInput"
+            style={styles.input}
+          />
+          <Text accessibilityLabel="ErrorMessageLabel">
+            {errorMessage}
+          </Text>
           <Button
             title="Log in"
-            accessibilityLabel="submitButton"
+            testID="loginButton"
             onPress={handleLogin}
           />
         </>
       ) : (
         <>
           <Text accessibilityLabel="welcomeText">
-            Welcome {email}
+            Welcome {username}, you are logged in
           </Text>
           <Button
             title="Log out"
