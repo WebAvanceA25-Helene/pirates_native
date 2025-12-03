@@ -1,3 +1,4 @@
+/*
 import React, { useState } from "react";
 import CheckBox from '@react-native-community/checkbox';
 import { View, Text, TextInput, Button, StyleSheet, FlatList } from "react-native";
@@ -29,10 +30,8 @@ export default function App() {
         console.log(jsonRes);
         await SecureStore.setItemAsync('token', jsonRes.token); //AI
         console.log(await SecureStore.getItemAsync('token'));//AI
-        setPassword("");
         setLogged(await SecureStore.getItemAsync('token') !== null);
         setErrorMessage("Login successful!");
-        handleGetBoats;
       } else {
         setErrorMessage("Invalid username or password");
       }
@@ -49,10 +48,17 @@ export default function App() {
     setErrorMessage("Logout successful!");
   };
 
+  const handleLogout = async () => {
+    await SecureStore.deleteItemAsync('token');
+    setLogged(false);
+    setUsername("");
+    setErrorMessage("Logout successful!");
+  };
+
   const handleGetBoats = async () => {
     try {
       const token = await SecureStore.getItemAsync('token');
-      const res = await fetch( base_url + '/ships', { 
+      const res = await fetch( base_url + '/ships', {
         method: 'Get',
         headers: {
           'Authorization': 'Bearer ' + token
@@ -88,6 +94,63 @@ export default function App() {
             accessibilityLabel="usernameInput"
             style={styles.input}
           />
+          <Button
+            title="Se connecter"
+            accessibilityLabel="submitButton" // 👈 Maestro s'en sert
+            onPress={handleLogin}
+          />
+        </>
+      ) : (
+        <Text accessibilityLabel="welcomeText">
+          Bienvenue {email}
+        </Text>
+      )}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  title: {
+    fontSize: 24,
+    marginBottom: 20,
+  },
+  input: {
+    width: "80%",
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 20,
+  },
+});
+*/
+import React, { useState } from "react";
+import { View, Text, TextInput, Button, StyleSheet } from "react-native";
+
+export default function App() {
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleLogin = () => {
+    setSubmitted(true);
+  };
+
+  const handleLogout = () => {
+    setSubmitted(false);
+    setEmail(""); // Optionnel : réinitialiser l'email
+  };
+
+  return (
+    <View style={styles.container}>
+      {!submitted ? (
+        <>
+          <Text style={styles.title}>Login</Text>
           <TextInput
             placeholder="Password"
             value={password}
@@ -126,7 +189,7 @@ export default function App() {
             }
             renderItem={({ item }) => (
               <View style={styles.listItem}>
-                <CheckBox 
+                <CheckBox
                   onValueChange={handleCheckBoxCheck}
                 />
                 <Text>{item.name}</Text>
@@ -169,8 +232,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   listItem: {
-     flexDirection: 'row', 
-     marginBottom: 6 
+     flexDirection: 'row',
+     marginBottom: 6
   },
 });
 
