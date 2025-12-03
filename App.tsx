@@ -40,6 +40,7 @@ export default function App() {
   const handleLogout = () => {
     setLogged(false);
     setUsername("");
+    setPassword("");
   };
 
   return (
@@ -67,7 +68,7 @@ export default function App() {
           </Text>
           <Button
             title="Log in"
-            accessibilityLabel="submitButton"
+            testID="loginButton"
             onPress={handleLogin}
           />
         </>

@@ -6,5 +6,5 @@ appId: host.exp.exponent
 - inputText: "test"
 - tapOn: "passwordInput"
 - inputText: "Patate123"
-- tapOn: "submitButton"
+- tapOn: "loginButton"
 - assertVisible: "Welcome test, you are logged in"
