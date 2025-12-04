@@ -1,15 +1,15 @@
-/*
 import React, { useState } from "react";
-import CheckBox from '@react-native-community/checkbox';
 import { View, Text, TextInput, Button, StyleSheet, FlatList } from "react-native";
 import * as SecureStore from 'expo-secure-store';
+import BoatCard from "./views/boatCard"
+import { Boat } from "./types/boatType";
 
 export default function App() {
   const [username, setUsername] = useState("");
   const [logged, setLogged] = useState(false);
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [boats, setBoats] = useState<any>([]);
+  const [boats, setBoats] = useState<Boat[]>([]);
   const base_url = "https://edwrdlhelene.me:2222/api"
 
   const handleLogin = async () => {
@@ -32,6 +32,7 @@ export default function App() {
         console.log(await SecureStore.getItemAsync('token'));//AI
         setLogged(await SecureStore.getItemAsync('token') !== null);
         setErrorMessage("Login successful!");
+        handleGetBoats();
       } else {
         setErrorMessage("Invalid username or password");
       }
@@ -45,13 +46,7 @@ export default function App() {
     await SecureStore.deleteItemAsync('token');
     setLogged(false);
     setUsername("");
-    setErrorMessage("Logout successful!");
-  };
-
-  const handleLogout = async () => {
-    await SecureStore.deleteItemAsync('token');
-    setLogged(false);
-    setUsername("");
+    setPassword("");
     setErrorMessage("Logout successful!");
   };
 
@@ -78,9 +73,6 @@ export default function App() {
     }
   }
 
-  const handleCheckBoxCheck = () => {
-
-  }
 
   return (
     <View style={styles.container}>
@@ -94,63 +86,6 @@ export default function App() {
             accessibilityLabel="usernameInput"
             style={styles.input}
           />
-          <Button
-            title="Se connecter"
-            accessibilityLabel="submitButton" // 👈 Maestro s'en sert
-            onPress={handleLogin}
-          />
-        </>
-      ) : (
-        <Text accessibilityLabel="welcomeText">
-          Bienvenue {email}
-        </Text>
-      )}
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    marginBottom: 20,
-  },
-  input: {
-    width: "80%",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 20,
-  },
-});
-*/
-import React, { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet } from "react-native";
-
-export default function App() {
-  const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-
-  const handleLogin = () => {
-    setSubmitted(true);
-  };
-
-  const handleLogout = () => {
-    setSubmitted(false);
-    setEmail(""); // Optionnel : réinitialiser l'email
-  };
-
-  return (
-    <View style={styles.container}>
-      {!submitted ? (
-        <>
-          <Text style={styles.title}>Login</Text>
           <TextInput
             placeholder="Password"
             value={password}
@@ -176,30 +111,7 @@ export default function App() {
           <FlatList
             data={boats}
             keyExtractor={(_, index) => index.toString()}
-            ListHeaderComponent={
-              <View style={styles.listItem}>
-                <Text>Selected</Text>
-                <Text>Boat name</Text>
-                <Text>Captain</Text>
-                <Text>Status</Text>
-                <Text>Gold cargo</Text>
-                <Text>Crew size</Text>
-                <Text>Creator</Text>
-              </View>
-            }
-            renderItem={({ item }) => (
-              <View style={styles.listItem}>
-                <CheckBox
-                  onValueChange={handleCheckBoxCheck}
-                />
-                <Text>{item.name}</Text>
-                <Text>{item.captain}</Text>
-                <Text>{item.status}</Text>
-                <Text>{item.goldCargo}</Text>
-                <Text>{item.crewSize}</Text>
-                <Text>{item.createdBy}</Text>
-              </View>
-            )}
+            renderItem={({ item }) => <BoatCard boat={item} />} //AI
           />
           <Button
             title="Log out"
