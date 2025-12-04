@@ -1,16 +1,20 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet } from "react-native";
+import { View, Text, TextInput, Button, StyleSheet, FlatList } from "react-native";
 import * as SecureStore from 'expo-secure-store';
+import BoatCard from "./views/boatCard"
+import { Boat } from "./types/boatType";
 
 export default function App() {
   const [username, setUsername] = useState("");
   const [logged, setLogged] = useState(false);
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [boats, setBoats] = useState<Boat[]>([]);
+  const base_url = "https://edwrdlhelene.me:2222/api"
 
   const handleLogin = async () => {
     try {
-      const res = await fetch('https://edwrdlhelene.me:2222/api/auth/login', {
+      const res = await fetch(base_url + '/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -28,6 +32,7 @@ export default function App() {
         console.log(await SecureStore.getItemAsync('token'));//AI
         setLogged(await SecureStore.getItemAsync('token') !== null);
         setErrorMessage("Login successful!");
+        handleGetBoats();
       } else {
         setErrorMessage("Invalid username or password");
       }
@@ -41,8 +46,33 @@ export default function App() {
     await SecureStore.deleteItemAsync('token');
     setLogged(false);
     setUsername("");
+    setPassword("");
     setErrorMessage("Logout successful!");
   };
+
+  const handleGetBoats = async () => {
+    try {
+      const token = await SecureStore.getItemAsync('token');
+      const res = await fetch( base_url + '/ships', {
+        method: 'Get',
+        headers: {
+          'Authorization': 'Bearer ' + token
+        },
+      }); //Helped by AI (nom du token dans les headers)
+
+      if(res.ok) {
+        const jsonRes = await res.json();
+        console.log(jsonRes);
+        setBoats(jsonRes);
+      } else {
+        setErrorMessage("Invalid username or password");
+      }
+
+    } catch (res) {
+      setErrorMessage("Failed to login\t" + res);
+    }
+  }
+
 
   return (
     <View style={styles.container}>
@@ -78,6 +108,11 @@ export default function App() {
           <Text accessibilityLabel="welcomeText">
             Welcome {username}, you are logged in
           </Text>
+          <FlatList
+            data={boats}
+            keyExtractor={(_, index) => index.toString()}
+            renderItem={({ item }) => <BoatCard boat={item} />} //AI
+          />
           <Button
             title="Log out"
             accessibilityLabel="logoutButton"
@@ -86,7 +121,7 @@ export default function App() {
         </>
       )}
     </View>
-  );
+  );//Aide de chatGPT pour le flatlist
 }
 
 const styles = StyleSheet.create({
@@ -107,6 +142,10 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     marginBottom: 20,
+  },
+  listItem: {
+     flexDirection: 'row',
+     marginBottom: 6
   },
 });
 
