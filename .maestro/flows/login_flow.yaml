@@ -8,4 +8,4 @@ appId: host.exp.exponent
 - inputText: "Patate123"
 - hideKeyboard
 - tapOn: "LOG IN"
-- assertVisible: "Welcome test, you are logged in"
+- assertVisible: "LOG OUT"
