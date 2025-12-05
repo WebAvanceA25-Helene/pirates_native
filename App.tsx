@@ -9,10 +9,17 @@ export default function App() {
   const [logged, setLogged] = useState(false);
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+
   const [boats, setBoats] = useState<Boat[]>([]);
   const [selectedBoatName, setSelectedBoatName] = useState("");
   const [brokerUsers, setBrokerUsers] = useState<string[]>([]);
   const [selectedBrokerUser, setSelectedBrokerUser] = useState(brokerUsers[0]);
+
+  const [createBoatName, setCreateBoatName] = useState("");
+  const [createBoatGold, setCreateBoatGold] = useState(0);
+  const [createBoatCaptain, setCreateBoatCaptain] = useState("");
+  const [createBoatCrew, setCreateBoatCrew] = useState(0);
+
   const base_url = "https://edwrdlhelene.me:2222/api"
 
   const handleLogin = async () => {
@@ -130,6 +137,35 @@ export default function App() {
     }
   }
 
+  const handleAddShip = async () => {
+    try {
+      const token = await SecureStore.getItemAsync('token');
+      const res = await fetch(base_url + '/ships/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify({
+          name: createBoatName,
+          goldCargo: createBoatGold,
+          captain: createBoatCaptain,
+          crewSize: createBoatCrew,
+        })
+      }); //Helped by AI (existence du fetch et ajout des headers et du stringify)
+
+      if(res.ok) {
+        handleGetBoats();
+        setErrorMessage("Boat creation successful");
+      } else {
+        setErrorMessage("Boat creation unsuccessful");
+      }
+
+    } catch (res) {
+      setErrorMessage("Failed to create this boat\t" + res);
+    }
+  }
+
 
   return (
     <View style={styles.container}>
@@ -170,6 +206,55 @@ export default function App() {
             keyExtractor={(_, index) => index.toString()}
             renderItem={({ item }) => <BoatCard boat={item} setErrorMessage={setErrorMessage} getBoats={handleGetBoats} />} //AI
           />
+
+          <View style={{
+              height: 1,            
+              backgroundColor: "#eee",
+              width: "100%",
+              marginVertical: 8,
+            }}
+          />
+          <Text>
+            Add a ship to this port:
+          </Text>
+          <Text>Boat name</Text>
+          <TextInput
+            placeholder="Boat name"
+            value={createBoatName}
+            onChangeText={setCreateBoatName}
+            accessibilityLabel="createBoatNameInput"
+            style={styles.input}
+          />
+          <Text>Gold cargo</Text>
+          <TextInput 
+            placeholder="Gold cargo"
+            keyboardType="numeric" 
+            onChangeText={(number) => setCreateBoatGold(Number(number))} 
+            value={String(createBoatGold)} 
+            style={styles.input}
+          />
+          <Text>Captain</Text>
+          <TextInput
+            placeholder="Boat captain"
+            value={createBoatCaptain}
+            onChangeText={setCreateBoatCaptain}
+            accessibilityLabel="createBoatCaptainInput"
+            style={styles.input}
+          />
+          <Text>Crew size</Text>
+          <TextInput 
+            placeholder="Crew size"
+            keyboardType="numeric" 
+            onChangeText={(number) => setCreateBoatCrew(Number(number))} 
+            value={String(createBoatCrew)} 
+            style={styles.input}
+          />
+          <Button
+            title="Add this ship to the port"
+            onPress={handleAddShip}
+          />
+
+
           <View style={{
               height: 1,            
               backgroundColor: "#eee",
