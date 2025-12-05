@@ -10,6 +10,9 @@ export default function App() {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [boats, setBoats] = useState<Boat[]>([]);
+  const [selectedBoatName, setSelectedBoatName] = useState("");
+  const [brokerUsers, setBrokerUsers] = useState<string[]>([]);
+  const [selectedBrokerUser, setSelectedBrokerUser] = useState(brokerUsers[0]);
   const base_url = "https://edwrdlhelene.me:2222/api"
 
   const handleLogin = async () => {
@@ -29,10 +32,10 @@ export default function App() {
         const jsonRes = await res.json();
         console.log(jsonRes);
         await SecureStore.setItemAsync('token', jsonRes.token); //AI
-        console.log(await SecureStore.getItemAsync('token'));//AI
-        setLogged(await SecureStore.getItemAsync('token') !== null);
+        setLogged(await SecureStore.getItemAsync('token') !== null); //AI
         setErrorMessage("Login successful!");
         handleGetBoats();
+        handleGetBrokerUsers();
       } else {
         setErrorMessage("Invalid username or password");
       }
@@ -62,14 +65,68 @@ export default function App() {
 
       if(res.ok) {
         const jsonRes = await res.json();
-        console.log(jsonRes);
         setBoats(jsonRes);
       } else {
-        setErrorMessage("Invalid username or password");
+        setErrorMessage("Couldn't get boats");
       }
 
     } catch (res) {
-      setErrorMessage("Failed to login\t" + res);
+      setErrorMessage("Failed to get boat list\t" + res);
+    }
+  }
+
+  const handleGetBrokerUsers = async () => {
+    try {
+      const token = await SecureStore.getItemAsync('token');
+      const res = await fetch( base_url + '/ships/send/userlist', {
+        method: 'Get',
+        headers: {
+          'Authorization': 'Bearer ' + token
+        },
+      }); //Helped by AI (nom du token dans les headers)
+
+      if(res.ok) {
+        const jsonRes = await res.json();
+        setBrokerUsers(jsonRes);
+      } else {
+        setErrorMessage("Couldn't get broker user list");
+      }
+
+    } catch (res) {
+      setErrorMessage("Failed to broker user list\t" + res);
+    }
+  }
+
+  const handleSailShip = async () => {
+    try {
+      const writtenBoat = boats.find(boat => boat.name === selectedBoatName);
+      const writtenBrokerUser = brokerUsers.find(user => user === selectedBrokerUser);
+      const token = await SecureStore.getItemAsync('token');
+      if(writtenBoat && writtenBrokerUser){
+        const res = await fetch(base_url + '/ships/send/'+writtenBrokerUser, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify({
+            id: writtenBoat.id
+          })
+        }); //Helped by AI (existence du fetch et ajout des headers et du stringify)
+  
+        if(res.ok) {
+          handleGetBoats();
+          setErrorMessage("Sailling successful");
+        } else {
+          setErrorMessage("Sailling unsuccessful" + res.status + res.statusText);
+        }
+      }
+      else {
+        setErrorMessage("Invalid boat name or destination port");
+      }
+
+    } catch (res) {
+      setErrorMessage("Failed to sail this boat\t" + res);
     }
   }
 
@@ -113,6 +170,38 @@ export default function App() {
             keyExtractor={(_, index) => index.toString()}
             renderItem={({ item }) => <BoatCard boat={item} />} //AI
           />
+          <View style={{
+              height: 1,            
+              backgroundColor: "#eee",
+              width: "100%",
+              marginVertical: 8,
+            }}
+          />
+          <Text>
+            Sail a ship to another port:
+          </Text>
+          <TextInput
+            placeholder="Boat name"
+            value={selectedBoatName}
+            onChangeText={setSelectedBoatName}
+            accessibilityLabel="sailBoatNameInput"
+            style={styles.input}
+          />
+          <TextInput
+            placeholder="Destination port"
+            value={selectedBrokerUser}
+            onChangeText={setSelectedBrokerUser}
+            accessibilityLabel="sailDestinationInput"
+            style={styles.input}
+          />
+          <Button
+            title="Send this boat to this port"
+            onPress={handleSailShip}
+          />
+
+          <Text accessibilityLabel="ErrorMessageLabel">
+            {errorMessage}
+          </Text>
           <Button
             title="Log out"
             accessibilityLabel="logoutButton"
@@ -121,7 +210,7 @@ export default function App() {
         </>
       )}
     </View>
-  );//Aide de chatGPT pour le flatlist
+  );//Aide de chatGPT pour le flatlist et le picker
 }
 
 const styles = StyleSheet.create({
@@ -147,5 +236,15 @@ const styles = StyleSheet.create({
      flexDirection: 'row',
      marginBottom: 6
   },
+  dropDown: { 
+    borderWidth: 1, 
+    borderColor: "#ccc", 
+    borderRadius: 8 
+  },
+  picker: {
+    width: "100%",
+    height: 50,
+    backgroundColor: "#00f"
+  }
 });
 
