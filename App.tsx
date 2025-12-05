@@ -118,7 +118,7 @@ export default function App() {
           handleGetBoats();
           setErrorMessage("Sailling successful");
         } else {
-          setErrorMessage("Sailling unsuccessful" + res.status + res.statusText);
+          setErrorMessage("Sailling unsuccessful");
         }
       }
       else {
@@ -168,7 +168,7 @@ export default function App() {
           <FlatList
             data={boats}
             keyExtractor={(_, index) => index.toString()}
-            renderItem={({ item }) => <BoatCard boat={item} />} //AI
+            renderItem={({ item }) => <BoatCard boat={item} setErrorMessage={setErrorMessage} getBoats={handleGetBoats} />} //AI
           />
           <View style={{
               height: 1,            
