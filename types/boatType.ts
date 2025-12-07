@@ -5,6 +5,7 @@ export interface Boat {
   captain: string;
   status: "docked" | "sailing" | "lookingForAFight";
   crewSize: number;
+  timesPillaged: number;
   createdBy: string;
   createdAt: Date;
   updatedAt: Date;

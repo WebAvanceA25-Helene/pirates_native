@@ -154,6 +154,7 @@ const BoatCard = ({ boat, setErrorMessage, getBoats }: Props) => {
         </Text>
         <Text>Crew size: {boat.crewSize} <Button title="-" onPress={handleDecrementCrewSize}/><Button title="+" onPress={handleIncrementCrewSize}/></Text>
         <Text>Status: {boat.status}</Text>
+        <Text>Nombre de pillages: {boat.timesPillaged}</Text>
         <Text>Created by: {boat.createdBy}</Text>
       </View>
     </View>
