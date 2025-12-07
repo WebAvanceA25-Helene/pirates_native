@@ -136,7 +136,6 @@ const BoatCard = ({ boat, setErrorMessage, getBoats }: Props) => {
     <View
       style={isChecked ? styles.checked : styles.unchecked}
     >
-      {/* Title */}
       <CheckBox
         onValueChange={handleCheckBoxCheck}
         value={isChecked}
@@ -146,7 +145,6 @@ const BoatCard = ({ boat, setErrorMessage, getBoats }: Props) => {
         {boat.name}
       </Text>
 
-      {/* Main details */}
       <View style={{ gap: 4 }}>
         <Text>Captain: {boat.captain}</Text>
         <Text>Gold cargo: {boat.goldCargo}
