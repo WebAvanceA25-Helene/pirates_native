@@ -158,6 +158,9 @@ const AdminView = ({mainBoats, mainBrokerUsers}: Props) => {
             style={{maxHeight:700}}
             />
             <Button title="Boat actions" onPress={() => setIsBoatListView(!isBoatListView)}></Button>
+            <Text accessibilityLabel="ErrorMessageLabel">
+            {errorMessage}
+            </Text>
             </>
         ) : (
             <>
