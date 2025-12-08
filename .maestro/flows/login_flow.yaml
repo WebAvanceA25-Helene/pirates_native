@@ -2,6 +2,8 @@ appId: host.exp.exponent
 ---
 #- launchApp
 # ⚠️ Assure-toi que ton app Expo est déjà ouverte dans l’émulateur avant d’exécuter ce test.
+# Utilisation de l'AI pour le hideKeyboard parce que le clavier cachait le bouton donc j'ai demandé à l'AI si c'était possible de le descendre
+# suite à la saisie et il m'a donné cette commande, bien utile!
 - tapOn: "usernameInput"
 - inputText: "test"
 - tapOn: "passwordInput"

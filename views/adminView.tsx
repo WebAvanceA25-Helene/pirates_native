@@ -39,7 +39,7 @@ const AdminView = ({mainBoats, mainBrokerUsers}: Props) => {
             headers: {
               'Authorization': 'Bearer ' + token
             },
-          }); //Helped by AI (nom du token dans les headers)
+          });
     
           if(res.ok) {
             const jsonRes = await res.json();
@@ -68,7 +68,7 @@ const AdminView = ({mainBoats, mainBrokerUsers}: Props) => {
                 body: JSON.stringify({
                     id: writtenBoat.id
                 })
-                }); //Helped by AI (existence du fetch et ajout des headers et du stringify)
+                });
         
                 if(res.ok) {
                 handleGetBoats();
@@ -100,7 +100,7 @@ const AdminView = ({mainBoats, mainBrokerUsers}: Props) => {
             captain: createBoatCaptain,
             crewSize: createBoatCrew,
             })
-        }); //Helped by AI (existence du fetch et ajout des headers et du stringify)
+        });
 
         if(res.ok) {
             handleGetBoats();
@@ -131,7 +131,7 @@ const AdminView = ({mainBoats, mainBrokerUsers}: Props) => {
                     transferGoldQty: pillageBoatGold,
                     oldTimesPillaged: writtenPillagedBoat?.timesPillaged
                 })
-            }); //Helped by AI (existence du fetch et ajout des headers et du stringify)
+            });
 
             if(res.ok) {
                 handleGetBoats();
@@ -154,7 +154,7 @@ const AdminView = ({mainBoats, mainBrokerUsers}: Props) => {
             <FlatList
             data={boats}
             keyExtractor={(_, index) => index.toString()}
-            renderItem={({ item }) => <BoatCard boat={item} setErrorMessage={setErrorMessage} getBoats={handleGetBoats} />} //AI
+            renderItem={({ item }) => <BoatCard boat={item} setErrorMessage={setErrorMessage} getBoats={handleGetBoats} />} //Le petit bout de fonction avec le item vient de l'AI (note que j'ai utilisé chatGPT partout où c'est écrit AI) ce que ça fait c'est que ça prend l'item (qui est appelé comme ça j'ai pas eu le droit de mettre boat)(et qui est issu de la liste boats parce que data={boats}) et ça appelle mon composant BoatCard, auquel je passe l'item dans les props pour qu'on le gère dans le BoatCard
             style={{maxHeight:700}}
             />
             <Button title="Boat actions" onPress={() => setIsBoatListView(!isBoatListView)}></Button>
@@ -292,7 +292,13 @@ const AdminView = ({mainBoats, mainBrokerUsers}: Props) => {
             </>
         )};
     </View>
-    );
+    );//Le flatlist en lui même est également le fruit de l'AI
+      //Je cherchais un moyen de faire une liste sans que tout soit pris ensemble et en faisant en sorte que tout rentre en largeur
+      //c'est là qu'il m'a proposé de faire des petites cartes dans une flatlist (qui en plus permet de scroll dans la liste)
+      //J'ai donc accepté cette gentille proposition
+      //Le data représente le tableau de données qu'on va chercher à afficher
+      //Le renderItem est expliqué plus haut mais c'ets la manière dont on va afficher les items de la liste 
+      //Et le keyExtractor lui donne une clé de reconnaissance, ici juste basée sur l'index dans le tableau
 };
 
 const styles = StyleSheet.create({

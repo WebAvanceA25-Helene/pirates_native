@@ -27,7 +27,7 @@ const UserView = ({mainBoats, mainBrokerUsers}: Props) => {
             headers: {
               'Authorization': 'Bearer ' + token
             },
-          }); //Helped by AI (nom du token dans les headers)
+          });
     
           if(res.ok) {
             const jsonRes = await res.json();
@@ -56,7 +56,7 @@ const UserView = ({mainBoats, mainBrokerUsers}: Props) => {
                 body: JSON.stringify({
                     id: writtenBoat.id
                 })
-                }); //Helped by AI (existence du fetch et ajout des headers et du stringify)
+                });
         
                 if(res.ok) {
                 handleGetBoats();
@@ -79,7 +79,7 @@ const UserView = ({mainBoats, mainBrokerUsers}: Props) => {
         <FlatList
         data={boats}
         keyExtractor={(_, index) => index.toString()}
-        renderItem={({ item }) => <BoatCard boat={item} setErrorMessage={setErrorMessage} getBoats={handleGetBoats} />} //AI
+        renderItem={({ item }) => <BoatCard boat={item} setErrorMessage={setErrorMessage} getBoats={handleGetBoats} />} //AI mais voir adminView pour les détails
         />
 
         <View style={styles.line}/>
@@ -109,7 +109,7 @@ const UserView = ({mainBoats, mainBrokerUsers}: Props) => {
         {errorMessage}
         </Text>
     </View>
-    );
+    );//AI pour le flatlist, voir adminView pour les détails
 };
 
 const styles = StyleSheet.create({

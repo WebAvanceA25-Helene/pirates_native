@@ -5,7 +5,8 @@ import { Boat } from "../types/boatType";
 import * as SecureStore from 'expo-secure-store';
 
 
-//Aidé par AI
+//Ce bout n'a pas été fait à l'aide de l'AI, mais bien en ouvrant le projet de la french press du cours d'interface du WEB avancée
+//Je trouvais la source plus fiable
 type Props = {
   boat: Boat,
   setErrorMessage: (message: string) => void,
@@ -35,7 +36,7 @@ const BoatCard = ({ boat, setErrorMessage, getBoats }: Props) => {
         body: JSON.stringify({
           oldCrewSize: boat.crewSize
         })
-      }); //Helped by AI (existence du fetch et ajout des headers et du stringify)
+      });
 
       if(res.ok) {
         getBoats();
@@ -62,7 +63,7 @@ const BoatCard = ({ boat, setErrorMessage, getBoats }: Props) => {
         body: JSON.stringify({
           oldCrewSize: boat.crewSize
         })
-      }); //Helped by AI (existence du fetch et ajout des headers et du stringify)
+      });
 
       if(res.ok) {
         getBoats();
@@ -90,7 +91,7 @@ const BoatCard = ({ boat, setErrorMessage, getBoats }: Props) => {
           oldGoldQty: boat.goldCargo,
           goldQty: goldQty
         })
-      }); //Helped by AI (existence du fetch et ajout des headers et du stringify)
+      });
 
       if(res.ok) {
         getBoats();
@@ -118,7 +119,7 @@ const BoatCard = ({ boat, setErrorMessage, getBoats }: Props) => {
           oldGoldQty: boat.goldCargo,
           goldQty: goldQty
         })
-      }); //Helped by AI (existence du fetch et ajout des headers et du stringify)
+      });
 
       if(res.ok) {
         getBoats();
@@ -139,7 +140,7 @@ const BoatCard = ({ boat, setErrorMessage, getBoats }: Props) => {
       <CheckBox
         onValueChange={handleCheckBoxCheck}
         value={isChecked}
-        color={isChecked ? "#00f" : "#000"} //AI
+        color={isChecked ? "#00f" : "#000"}
       />
       <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 4 }}>
         {boat.name}
@@ -159,7 +160,10 @@ const BoatCard = ({ boat, setErrorMessage, getBoats }: Props) => {
       </View>
     </View>
   );
-};//Transtypage vient de l'AI
+};//Dans le textInput, le transtypage vient de l'AI
+  //Je ne savais pas comment gérer adéquatement les number dans des inputs faits pour du texte et j'ai donc demandé
+  //Finalement la solution que l'AI m'a sortie est d'avoir recours au transtypage, donc de préciser que cette valeur est un nombre, comme ça on sait que c'est un nombre
+  //Ou dire que ce nombre est une string parce qu'il veut afficher une string et que toi t'as un nombre
 
 const styles = StyleSheet.create({
 
